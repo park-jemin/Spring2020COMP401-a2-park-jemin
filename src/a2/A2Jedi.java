@@ -28,7 +28,7 @@ public class A2Jedi extends A2Primary {
 	   <IngredientNTotalAmount> ounces of <IngredientN>
 	 */
 	private static void output ( Ingredient[] ingredients ) {
-		System.out.println("This order will require:");
+		System.out.println("The order will require:");
 		for (int i = 0; i < ingredients.length; i++) {
 			System.out.println(ingredients[i].orderRequirement());
 		}
