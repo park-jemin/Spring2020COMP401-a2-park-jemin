@@ -29,9 +29,9 @@ public class A2Primary {
 	 */
 	public static Ingredient[] ingredientInfo (Scanner scan) {
 		Ingredient[] ingredients = new Ingredient[scan.nextInt()];
-		for (int i = 0; i < ingredients.length; i++) {
+		for (int i = 0; i < ingredients.length; i++)
 			ingredients[i] = new Ingredient(scan.next(), scan.nextDouble(), scan.nextBoolean(), scan.nextInt(), 0);
-		}
+			
 		return ingredients;
 	}
 	
@@ -40,34 +40,26 @@ public class A2Primary {
 	 * Used to find the biggest and smallest spenders (A2Novice), and the matching ingredient found 
 	 * in a menu item's recipe for menuPrep (A2Jedi)
 	 *
-	 * Input: a keyword as a string, ingredient set data as an Ingredient array
+	 * Input: a keyword as a string, ingredient set data as an non-empty Ingredient array
 	 * 
 	 * Output: the Ingredient matching the condition
 	 * Returns the first ingredient in the ingredients array if none match the stated conditions
 	 */
 	public static Ingredient find (String key, Ingredient[] ingredients) {
-		
 		Ingredient memo = ingredients[0];
 		
-		if (key.matches("lowest")) { // finds lowest cals/$
-			for (int i = 1; i < ingredients.length; i++) {
-				memo = (ingredients[i].caloriesPerDollar < memo.caloriesPerDollar) ? ingredients[i] : memo;
-			}
+		if (key.matches("lowest")) // finds lowest cals/$
+			for (Ingredient item : ingredients)
+				memo = (item.caloriesPerDollar < memo.caloriesPerDollar) ? item : memo;
 			
+		else if (key.matches("highest")) // finds highest cals/$
+			for (Ingredient item : ingredients)
+				memo = (item.caloriesPerDollar > memo.caloriesPerDollar) ? item : memo;
 			
-		} else if (key.matches("highest")) { // finds highest cals/$
-			for (int i = 1; i < ingredients.length; i++) {
-				memo = (ingredients[i].caloriesPerDollar > memo.caloriesPerDollar) ? ingredients[i] : memo;
-			}
-			
-		} else for (int i = 0; i < ingredients.length; i++) {
-			if (key.matches(ingredients[i].name)) { // finds ingredient matching key name
-				memo = ingredients[i];
-			}
-		}
+		else for (Ingredient item : ingredients)
+			memo = (key.equals(item.name)) ? item : memo;
 		
 		return memo;
-		
 	}
 	
 	/* menuInfo
@@ -90,9 +82,10 @@ public class A2Primary {
 	 */
 	public static MenuItem[] menuInfo (Scanner scan, Ingredient[] ingredients) {
 		MenuItem[] menu = new MenuItem[scan.nextInt()];
-		for (int i = 0; i < menu.length; i++) {
+		
+		for (int i = 0; i < menu.length; i++)
 			menu[i] = new MenuItem(scan, ingredients);
-		}
+		
 		return menu;
 	}
 
@@ -110,9 +103,9 @@ public class A2Primary {
 	 */
 	public static void order (Scanner scan, MenuItem[] menu, Ingredient[] ingredients) {
 		String key = scan.next();
-		if (key.matches("EndOrder")) {
+		if (key.equals("EndOrder")) // base case
 			return;
-		}
+			
 		menuPrep(key, menu, ingredients);
 		order(scan, menu, ingredients);		
 	}
@@ -125,13 +118,11 @@ public class A2Primary {
 	 * Output: None (builds ounces required in ingredient list)
 	 */
 	public static void menuPrep (String order, MenuItem[] menu, Ingredient[] ingredients) {
-		for (int i = 0; i < menu.length; i++) {
-			if (order.matches(menu[i].name)) {
-				for (int j = 0; j < menu[i].recipe.length; j++) {
-					find(menu[i].recipe[j].name, ingredients).ouncesRequired += menu[i].recipe[j].ouncesRequired;	
-				}
-			}
-		}
+		for (int i = 0; i < menu.length; i++) 	
+			if (order.equals(menu[i].name))
+				for (int j = 0; j < menu[i].recipe.length; j++)
+					find(menu[i].recipe[j].name, ingredients).ouncesRequired += menu[i].recipe[j].ouncesRequired;
+		
 	}
 	
 }
@@ -144,10 +135,9 @@ public class A2Primary {
 class Ingredient {
 	
 	String name;
-	double pricePerOunce;
+	double pricePerOunce, caloriesPerDollar, ouncesRequired;
 	boolean isVegetarian;
 	int caloriesPerOunce;
-	double caloriesPerDollar, ouncesRequired = 0;
 	
 	public Ingredient ( String name, double price, boolean isVeg, int cals, double ounces) {
 		this.name = name;
@@ -162,7 +152,7 @@ class Ingredient {
 	 * clones this ingredient to menu recipe data with ounces required of this ingredient
 	 */
 	public Ingredient clone (double ounces) {
-		return new Ingredient (this.name, this.pricePerOunce, this.isVegetarian, this.caloriesPerOunce, ounces);
+		return new Ingredient (name, pricePerOunce, isVegetarian, caloriesPerOunce, ounces);
 	}
 	
 	/* orderRequirement
@@ -170,7 +160,7 @@ class Ingredient {
 	 * <IngredientTotalAmount> ounces of <IngredientName>
 	 */
 	public String orderRequirement() { 
-		return String.format("%.2f", this.ouncesRequired) + " ounces of " + this.name;
+		return String.format("%.2f", ouncesRequired) + " ounces of " + name;
 	}
 	
 }
@@ -192,11 +182,10 @@ class MenuItem {
 	double calories, cost = 0;
 	
 	public MenuItem ( Scanner scan, Ingredient[] ingredients ) {
-		this.name = scan.next();
-		this.recipe = new Ingredient[scan.nextInt()];
-		for (int i = 0; i < this.recipe.length; i++) {
-			this.recipe[i] = ingredientSearch(scan.next(), scan.nextDouble(), ingredients);
-		} 
+		name = scan.next();
+		recipe = new Ingredient[scan.nextInt()];
+		for (int i = 0; i < recipe.length; i++)
+			recipe[i] = ingredientSearch(scan.next(), scan.nextDouble(), ingredients);
 	}
 	
 	/* ingredientSearch
@@ -205,16 +194,15 @@ class MenuItem {
 	 * Also adjusts vegetarian status, cost, and calorie count of the menu item based on ingredients
 	 */
 	public Ingredient ingredientSearch (String item, double ounces, Ingredient[] ingredients) {	
-		for (int i = 0; i < ingredients.length; i++) {
-			if (item.matches(ingredients[i].name)) {
-				this.isVegetarian = (!ingredients[i].isVegetarian) ? false : this.isVegetarian;
-				this.cost += ingredients[i].pricePerOunce * ounces;
-				this.calories += ingredients[i].caloriesPerOunce * ounces;
-				return ingredients[i].clone(ounces);
+		for (Ingredient ingredient : ingredients) {
+			if (item.matches(ingredient.name)) {
+				this.isVegetarian = (!ingredient.isVegetarian) ? false : this.isVegetarian;
+				this.cost += ingredient.pricePerOunce * ounces;
+				this.calories += ingredient.caloriesPerOunce * ounces;
+				return ingredient.clone(ounces);
 			}
 		}
-		return new Ingredient ("", 0, false, 0, 0);
-		
+		return null;
 	}
 	
 	/* summary
@@ -223,16 +211,13 @@ class MenuItem {
   		 <CalorieCount> calories
   		 $<Cost>
   		 <"Vegetarian" or "Non-Vegetarian">
+  		 can use (int)(this.calories + 0.5)  to round
 	 */
 	public void summary () {
-		System.out.println(this.name + ":");
-		System.out.println("  " + ( (int)(this.calories + 0.5) ) + " calories");
-		System.out.println("  $" + String.format("%.2f", this.cost));
-		if (this.isVegetarian) {
-			System.out.println("  Vegetarian");
-		} else {
-			System.out.println("  Non-Vegetarian");
-		}
+		System.out.println(name + ":");
+		System.out.println("  " + (Math.round(calories)) + " calories");
+		System.out.println("  $" + String.format("%.2f", cost));
+		System.out.println( (isVegetarian) ? "  Vegetarian" : "  Non-Vegetarian");
 	}
 	
 }

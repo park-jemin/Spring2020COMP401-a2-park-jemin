@@ -1,5 +1,6 @@
 package a2;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class A2Adept extends A2Primary {
@@ -14,18 +15,7 @@ public class A2Adept extends A2Primary {
 		
 		scan.close();
 		
-		output(menu);
-	}
-	
-	/* output
-	 * Prints summary of each menu item with name, calorie count, price, 
-	 * and vegetarian status
-	 * (See MenuItem summary method for more info)
-	 */
-	private static void output ( MenuItem[] menu ) {
-		for (int i = 0; i < menu.length; i++) {
-			menu[i].summary();
-		}
+		Arrays.asList(menu).forEach((item) -> item.summary());
 	}
 	
 }

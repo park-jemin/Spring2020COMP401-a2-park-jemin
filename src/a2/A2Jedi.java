@@ -1,5 +1,6 @@
 package a2;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class A2Jedi extends A2Primary {
@@ -16,22 +17,8 @@ public class A2Jedi extends A2Primary {
 		
 		scan.close();
 		
-		output(ingredients);
-	}
-	
-	/* output
-	 * Prints ingredient requirement for the order with the following format:
-	 * The order will require:
-	   <Ingredient1TotalAmount> ounces of <Ingredient1>
-	   <Ingredient2TotalAmount> ounces of <Ingredient2>
-	   ...
-	   <IngredientNTotalAmount> ounces of <IngredientN>
-	 */
-	private static void output ( Ingredient[] ingredients ) {
 		System.out.println("The order will require:");
-		for (int i = 0; i < ingredients.length; i++) {
-			System.out.println(ingredients[i].orderRequirement());
-		}
+		Arrays.asList(ingredients).forEach((item) -> System.out.println(item.orderRequirement()));
 	}
 	
 }
